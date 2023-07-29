@@ -18,13 +18,16 @@ class BotVkInterface():
 
     def message_send(self, user_id, message, attachment=None):
         self.vk.method('messages.send',
-                        {'user_id': user_id,
-                        'message': message,
-                        'attachment': attachment,
-                        'random_id': get_random_id(),})
+                        {
+                         'user_id': user_id,
+                         'message': message,
+                         'attachment': attachment,
+                         'random_id': get_random_id(),
+                        }
+                      )
 
-    def get_user_photo(self, user_id):
-        photos = self.vk_tools.get_photos(user_id)
+    def get_user_photo(self, worksheets):
+        worksheet = self.worksheets.pop()
         photo_string = ''
         for photo in photos:
             photo_string += f'photo{photo["owner_id"]}_{photo["id"]},'
@@ -57,11 +60,12 @@ class BotVkInterface():
                 elif command.startswith('город '):
                     city_name = ' '.join(event.text.lower().split()[1:])
                     city = self.vk_tools.__class__(city_name)
+                    
                     if city is None:
                         self.message_send(event.user_id, 'Не удалось найти такой город')
                     else:
                         self.params['city'] = self.vk_tools.__class__(city_name)
-                        self.message_send(event.user_id,
+                        self.message_send(event.user_id)
                                           
                 elif command.startswith('возраст '):
                     age = event.text.lower().split()[1]
@@ -77,13 +81,13 @@ class BotVkInterface():
                 elif command == 'показать анкеты':
     
                     if self.worksheets:
-                        photo_string = get_user_photo(user_id)
+                        photo_string = get_user_photo(worksheets)
                         
                     else:
                         self.worksheets = self.vk_tools.search_worksheet(self.params, self.offset)
-                        photo_string = get_user_photo(user_id)
+                        photo_string = get_user_photo(worksheets)
                         
-                        self.offset += 10
+                    self.offset += 10
                         
                     self.message_send(event.user_id, f'имя: {worksheet["name"]} ссылка: vk.com/{worksheet["id"]}',
                                       attachment=photo_string)

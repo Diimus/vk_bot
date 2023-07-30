@@ -35,7 +35,7 @@ class BotVkInterface():
 
 # обработка событий / получение сообщений
 
-    def event_handler(self):
+    def event_info(self):
         
         for event in self.longpoll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
@@ -78,7 +78,7 @@ class BotVkInterface():
                     self.params['bdate'] = age
                     self.message_send(event.user_id)
                     
-                elif command == 'показать анкеты':
+                elif command == 'показать фото':
     
                     if self.worksheets:
                         photo_string = get_user_photo(worksheets)
@@ -103,4 +103,4 @@ class BotVkInterface():
 if __name__ == '__main__':
     engine = create_engine(db_url_object)
     bot_interface = BotVkInterface(a_token, c_token, engine)
-    bot_interface.event_handler()
+    bot_interface.event_info()
